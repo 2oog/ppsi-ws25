@@ -66,18 +66,82 @@ pnpm install
 pnpm dev
 ```
 
-You should now be able to access the application at http://localhost:3000.
+You should now be able to access the application at <http://localhost:3000>.
 
 ## Testing accounts
 
-Student: 
-- Email: student@example.com
+Student:
+
+- Email: <student@example.com>
 - Password: f8ZdYc6fsNPYOBnS
 
-Tutor: 
-- Email: tutor@example.com
+Tutor:
+
+- Email: <tutor@example.com>
 - Password: f8ZdYc6fsNPYOBnS
 
-Admin: 
-- Email: admin@example.com
+Admin:
+
+- Email: <admin@example.com>
 - Password: f8ZdYc6fsNPYOBnS
+
+## To Dos
+
+### Site-wide Features
+
+- [ ] **app/layout.tsx**: Update metadata with proper SEO tags (title, description, OG tags)
+- [ ] **Authentication Flows**:
+  - [x] Email-based login flow (`/login`)
+  - [ ] Registration flow (`/login/register` or `/register`) - UI not yet created
+  - [ ] OAuth Google integration for login
+  - [ ] OAuth Google integration for registration
+
+### Role-Specific Features
+
+#### All Roles
+
+- [x] Email notifications (API endpoint exists: `/api/notifications`)
+- [x] In-app notifications (API endpoint exists: `/api/notifications`)
+- [ ] Notification bell UI component in dashboard layout
+- [ ] Email delivery integration (currently only in-app)
+
+#### Student Features
+
+- [x] `/dashboard/student/bookings` - View and manage bookings (page exists)
+- [x] Booking creation flow (API: `POST /api/bookings`)
+- [x] `/dashboard/student/search` - Tutor search flow (page exists, API: `GET /api/tutors`)
+- [ ] Advanced search filters (subject, specialization, rating, availability)
+- [ ] Review submission UI (API exists: `POST /api/reviews`)
+- [ ] Learning history view
+
+#### Tutor Features
+
+- [x] `/dashboard/tutor/profile` - Tutor profile page (page exists)
+- [x] `/dashboard/tutor/schedule` - Schedule management (page exists)
+- [x] Document upload for verification (API: `POST /api/tutors/documents`)
+- [ ] Booking acceptance/rejection flow UI (API exists: `PUT /api/bookings/[id]`)
+- [ ] Profile customization form (bio, specialization, experience, hourly rate)
+- [ ] Verification status visibility and updates after admin approval
+- [ ] Availability calendar management UI
+
+#### Admin Features
+
+- [x] `/dashboard/admin/verification` - Tutor verification queue (page exists)
+- [x] Verify/approve/reject tutors (API: `PUT /api/admin/tutors/[id]/verify`)
+- [ ] `/dashboard/admin/users` - User management interface (students, tutors)
+- [ ] Platform activity metrics dashboard
+- [ ] Review moderation tools
+- [ ] System alerts and monitoring
+
+### Implementation Notes
+
+**Current API Coverage ✅**:
+All core API endpoints are implemented (`/api/auth`, `/api/bookings`, `/api/reviews`, `/api/tutors`, `/api/notifications`, `/api/admin/tutors`).
+
+**Missing UI Components**:
+- Registration page
+- OAuth integration buttons
+- Notification bell/dropdown
+- Review modal/form
+- Advanced search filters
+- Admin user management table

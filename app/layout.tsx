@@ -3,9 +3,9 @@ import './globals.css';
 import { Analytics } from '@vercel/analytics/react';
 
 export const metadata = {
-  title: 'Next.js App Router + NextAuth + Tailwind CSS',
+  title: 'TutorGo',
   description:
-    'A user admin dashboard configured with Next.js, Postgres, NextAuth, Tailwind CSS, TypeScript, and Prettier.'
+    'Uhm... meow?'
 };
 
 export default function RootLayout({
