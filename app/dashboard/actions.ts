@@ -1,10 +1,4 @@
 'use server';
 
-import { deleteProductById } from '@/lib/db';
-import { revalidatePath } from 'next/cache';
+// Server actions for dashboard operations will be added here as needed
 
-export async function deleteProduct(formData: FormData) {
-  // let id = Number(formData.get('id'));
-  // await deleteProductById(id);
-  // revalidatePath('/');
-}
