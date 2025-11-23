@@ -1,7 +1,5 @@
-import 'server-only';
-
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import {
   pgTable,
   text,
@@ -9,64 +7,210 @@ import {
   integer,
   timestamp,
   pgEnum,
-  serial
+  serial,
+  varchar,
+  boolean,
+  json,
+  decimal,
+  index
 } from 'drizzle-orm/pg-core';
-import { count, eq, ilike } from 'drizzle-orm';
-import { createInsertSchema } from 'drizzle-zod';
+import { relations } from 'drizzle-orm';
 
-export const db = drizzle(neon(process.env.POSTGRES_URL!));
+const client = postgres(process.env.POSTGRES_URL!);
+export const db = drizzle(client);
 
-export const statusEnum = pgEnum('status', ['active', 'inactive', 'archived']);
+// Enums
+export const rolesEnum = pgEnum('roles', ['admin', 'tutor', 'student']);
+export const verificationStatusEnum = pgEnum('verification_statuses', [
+  'pending',
+  'approved',
+  'rejected'
+]);
+export const bookingStatusEnum = pgEnum('booking_statuses', [
+  'pending',
+  'confirmed',
+  'completed',
+  'cancelled'
+]);
 
-export const products = pgTable('products', {
+// Tables
+export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  imageUrl: text('image_url').notNull(),
-  name: text('name').notNull(),
-  status: statusEnum('status').notNull(),
-  price: numeric('price', { precision: 10, scale: 2 }).notNull(),
-  stock: integer('stock').notNull(),
-  availableAt: timestamp('available_at').notNull()
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+  role: rolesEnum('role').notNull(),
+  fullname: varchar('fullname', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 20 }),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
 });
 
-export type SelectProduct = typeof products.$inferSelect;
-export const insertProductSchema = createInsertSchema(products);
+export const tutors = pgTable(
+  'tutors',
+  {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id')
+      .notNull()
+      .unique()
+      .references(() => users.id),
+    bio: text('bio'),
+    specialization: varchar('specialization', { length: 255 }),
+    experienceYears: integer('experience_years'),
+    verificationStatus: verificationStatusEnum('verification_status').default(
+      'pending'
+    ),
+    cvFilePath: varchar('cv_file_path', { length: 500 }),
+    certificateFilePath: varchar('certificate_file_path', { length: 500 }),
+    hourlyRate: decimal('hourly_rate', { precision: 10, scale: 2 }),
+    averageRating: decimal('average_rating', { precision: 3, scale: 2 }).default(
+      '0.00'
+    ),
+    totalSessions: integer('total_sessions').default(0),
+    jadwalKetersediaan: json('jadwal_ketersediaan'),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow()
+  },
+  (table) => ({
+    idxSpecialization: index('idx_specialization').on(table.specialization),
+    idxVerification: index('idx_verification').on(table.verificationStatus)
+  })
+);
 
-export async function getProducts(
-  search: string,
-  offset: number
-): Promise<{
-  products: SelectProduct[];
-  newOffset: number | null;
-  totalProducts: number;
-}> {
-  // Always search the full table, not per page
-  if (search) {
-    return {
-      products: await db
-        .select()
-        .from(products)
-        .where(ilike(products.name, `%${search}%`))
-        .limit(1000),
-      newOffset: null,
-      totalProducts: 0
-    };
-  }
+export const students = pgTable('students', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .unique()
+    .references(() => users.id),
+  educationLevel: varchar('education_level', { length: 100 }),
+  interests: text('interests'),
+  createdAt: timestamp('created_at').defaultNow()
+});
 
-  if (offset === null) {
-    return { products: [], newOffset: null, totalProducts: 0 };
-  }
+export const bookings = pgTable(
+  'bookings',
+  {
+    id: serial('id').primaryKey(),
+    studentId: integer('student_id')
+      .notNull()
+      .references(() => students.id),
+    tutorId: integer('tutor_id')
+      .notNull()
+      .references(() => tutors.id),
+    subject: varchar('subject', { length: 255 }).notNull(),
+    sessionDate: timestamp('session_date').notNull(),
+    durationMinutes: integer('duration_minutes').default(60),
+    status: bookingStatusEnum('status').default('pending'),
+    notes: text('notes'),
+    version: integer('version').default(0),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow()
+  },
+  (table) => ({
+    idxStudent: index('idx_student').on(table.studentId),
+    idxTutor: index('idx_tutor').on(table.tutorId),
+    idxDate: index('idx_date').on(table.sessionDate),
+    idxStatus: index('idx_status').on(table.status)
+  })
+);
 
-  let totalProducts = await db.select({ count: count() }).from(products);
-  let moreProducts = await db.select().from(products).limit(5).offset(offset);
-  let newOffset = moreProducts.length >= 5 ? offset + 5 : null;
+export const reviews = pgTable(
+  'reviews',
+  {
+    id: serial('id').primaryKey(),
+    bookingId: integer('booking_id')
+      .notNull()
+      .unique()
+      .references(() => bookings.id),
+    studentId: integer('student_id')
+      .notNull()
+      .references(() => students.id),
+    tutorId: integer('tutor_id')
+      .notNull()
+      .references(() => tutors.id),
+    rating: integer('rating'),
+    comment: text('comment'),
+    createdAt: timestamp('created_at').defaultNow()
+  },
+  (table) => ({
+    idxTutorReview: index('idx_tutor_review').on(table.tutorId)
+  })
+);
 
-  return {
-    products: moreProducts,
-    newOffset,
-    totalProducts: totalProducts[0].count
-  };
-}
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id),
+    type: varchar('type', { length: 50 }),
+    message: text('message'),
+    isRead: boolean('is_read').default(false),
+    createdAt: timestamp('created_at').defaultNow()
+  },
+  (table) => ({
+    idxUser: index('idx_user').on(table.userId),
+    idxType: index('idx_type').on(table.type)
+  })
+);
 
-export async function deleteProductById(id: number) {
-  await db.delete(products).where(eq(products.id, id));
-}
+// Relations
+export const usersRelations = relations(users, ({ one }) => ({
+  tutorProfile: one(tutors, {
+    fields: [users.id],
+    references: [tutors.userId]
+  }),
+  studentProfile: one(students, {
+    fields: [users.id],
+    references: [students.userId]
+  })
+}));
+
+export const tutorsRelations = relations(tutors, ({ one, many }) => ({
+  user: one(users, {
+    fields: [tutors.userId],
+    references: [users.id]
+  }),
+  bookings: many(bookings),
+  reviews: many(reviews)
+}));
+
+export const studentsRelations = relations(students, ({ one, many }) => ({
+  user: one(users, {
+    fields: [students.userId],
+    references: [users.id]
+  }),
+  bookings: many(bookings),
+  reviews: many(reviews)
+}));
+
+export const bookingsRelations = relations(bookings, ({ one }) => ({
+  student: one(students, {
+    fields: [bookings.studentId],
+    references: [students.id]
+  }),
+  tutor: one(tutors, {
+    fields: [bookings.tutorId],
+    references: [tutors.id]
+  }),
+  review: one(reviews, {
+    fields: [bookings.id],
+    references: [reviews.bookingId]
+  })
+}));
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  booking: one(bookings, {
+    fields: [reviews.bookingId],
+    references: [bookings.id]
+  }),
+  student: one(students, {
+    fields: [reviews.studentId],
+    references: [students.id]
+  }),
+  tutor: one(tutors, {
+    fields: [reviews.tutorId],
+    references: [tutors.id]
+  })
+}));

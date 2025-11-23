@@ -1,0 +1,127 @@
+import { db, bookings, tutors, students, users } from '@/lib/db';
+import { auth } from '@/lib/auth';
+import { eq, and, desc } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const createBookingSchema = z.object({
+    tutorId: z.number(),
+    subject: z.string().min(1),
+    sessionDate: z.string().datetime(),
+    durationMinutes: z.number().min(30).default(60),
+    notes: z.string().optional()
+});
+
+export async function POST(request: Request) {
+    const session = await auth();
+    if (!session?.user || session.user.role !== 'student') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    try {
+        const body = await request.json();
+        const { tutorId, subject, sessionDate, durationMinutes, notes } = createBookingSchema.parse(body);
+
+        const studentRecord = await db
+            .select()
+            .from(students)
+            .where(eq(students.userId, parseInt(session.user.id!)))
+            .limit(1);
+
+        if (studentRecord.length === 0) {
+            return NextResponse.json({ error: 'Student profile not found' }, { status: 404 });
+        }
+
+        const [newBooking] = await db
+            .insert(bookings)
+            .values({
+                studentId: studentRecord[0].id,
+                tutorId,
+                subject,
+                sessionDate: new Date(sessionDate),
+                durationMinutes,
+                notes,
+                status: 'pending'
+            })
+            .returning();
+
+        return NextResponse.json(newBooking, { status: 201 });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return NextResponse.json({ error: 'Invalid input', details: error.errors }, { status: 400 });
+        }
+        console.error('Error creating booking:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+export async function GET(request: Request) {
+    const session = await auth();
+    if (!session?.user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    try {
+        const userId = parseInt(session.user.id!);
+        let results;
+
+        if (session.user.role === 'student') {
+            const studentRecord = await db
+                .select()
+                .from(students)
+                .where(eq(students.userId, userId))
+                .limit(1);
+
+            if (studentRecord.length === 0) return NextResponse.json([]);
+
+            results = await db
+                .select({
+                    id: bookings.id,
+                    subject: bookings.subject,
+                    sessionDate: bookings.sessionDate,
+                    durationMinutes: bookings.durationMinutes,
+                    status: bookings.status,
+                    notes: bookings.notes,
+                    tutorName: users.fullname,
+                    tutorId: tutors.id
+                })
+                .from(bookings)
+                .innerJoin(tutors, eq(bookings.tutorId, tutors.id))
+                .innerJoin(users, eq(tutors.userId, users.id))
+                .where(eq(bookings.studentId, studentRecord[0].id))
+                .orderBy(desc(bookings.sessionDate));
+        } else if (session.user.role === 'tutor') {
+            const tutorRecord = await db
+                .select()
+                .from(tutors)
+                .where(eq(tutors.userId, userId))
+                .limit(1);
+
+            if (tutorRecord.length === 0) return NextResponse.json([]);
+
+            results = await db
+                .select({
+                    id: bookings.id,
+                    subject: bookings.subject,
+                    sessionDate: bookings.sessionDate,
+                    durationMinutes: bookings.durationMinutes,
+                    status: bookings.status,
+                    notes: bookings.notes,
+                    studentName: users.fullname,
+                    studentId: students.id
+                })
+                .from(bookings)
+                .innerJoin(students, eq(bookings.studentId, students.id))
+                .innerJoin(users, eq(students.userId, users.id))
+                .where(eq(bookings.tutorId, tutorRecord[0].id))
+                .orderBy(desc(bookings.sessionDate));
+        } else {
+            return NextResponse.json({ error: 'Invalid role' }, { status: 403 });
+        }
+
+        return NextResponse.json(results);
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
