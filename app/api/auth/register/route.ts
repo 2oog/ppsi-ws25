@@ -9,7 +9,10 @@ const registerSchema = z.object({
     password: z.string().min(6),
     fullname: z.string().min(2),
     role: z.enum(['student', 'tutor', 'admin']),
-    phone: z.string().min(1, 'Phone number is required')
+    phone: z.string().min(1, 'Phone number is required'),
+    specialization: z.string().optional(),
+    cvFilePath: z.string().optional(),
+    certificateFilePaths: z.array(z.string()).optional()
 });
 
 function formatPhoneNumber(phone: string): string {
@@ -20,6 +23,7 @@ function formatPhoneNumber(phone: string): string {
     if (formatted.startsWith('+')) {
         formatted = formatted.substring(1);
     }
+
     // If leading 0, assume it's from Indonesia and convert to 62xxx
     else if (formatted.startsWith('0')) {
         formatted = '62' + formatted.substring(1);
@@ -31,7 +35,7 @@ function formatPhoneNumber(phone: string): string {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { email, password, fullname, role, phone } = registerSchema.parse(body);
+        const { email, password, fullname, role, phone, specialization, cvFilePath, certificateFilePaths } = registerSchema.parse(body);
 
         const existingUser = await db
             .select()
@@ -68,7 +72,10 @@ export async function POST(request: Request) {
             });
         } else if (role === 'tutor') {
             await db.insert(tutors).values({
-                userId: newUser.id
+                userId: newUser.id,
+                specialization,
+                cvFilePath,
+                certificateFilePaths
             });
         }
 
@@ -78,11 +85,16 @@ export async function POST(request: Request) {
         );
     } catch (error) {
         if (error instanceof z.ZodError) {
+            const { fieldErrors } = error.flatten();
             return NextResponse.json(
-                { error: 'Invalid input', details: error.errors },
+                {
+                    error: 'Invalid input',
+                    fieldErrors,
+                },
                 { status: 400 }
             );
         }
+
         console.error('Registration error:', error);
         return NextResponse.json(
             { error: 'Internal server error' },

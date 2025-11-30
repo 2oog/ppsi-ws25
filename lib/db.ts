@@ -60,7 +60,7 @@ export const tutors = pgTable(
       'pending'
     ),
     cvFilePath: varchar('cv_file_path', { length: 500 }),
-    certificateFilePath: varchar('certificate_file_path', { length: 500 }),
+    certificateFilePaths: json('certificate_file_paths').$type<string[]>(),
     hourlyRate: decimal('hourly_rate', { precision: 10, scale: 2 }),
     averageRating: decimal('average_rating', { precision: 3, scale: 2 }).default(
       '0.00'

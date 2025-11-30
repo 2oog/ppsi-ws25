@@ -2,8 +2,8 @@ import { auth } from '@/lib/auth';
 import { db, tutors } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { r2, R2_BUCKET_NAME, R2_PUBLIC_URL } from '@/lib/r2';
 
 export async function POST(request: Request) {
     const session = await auth();
@@ -31,27 +31,45 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Tutor profile not found' }, { status: 404 });
         }
 
-        const uploadDir = path.join(process.cwd(), 'public/uploads');
-        await mkdir(uploadDir, { recursive: true });
-
         const updates: any = {};
 
         if (cvFile) {
             const buffer = Buffer.from(await cvFile.arrayBuffer());
-            const filename = `cv-${userId}-${Date.now()}-${cvFile.name}`;
-            await writeFile(path.join(uploadDir, filename), buffer);
-            updates.cvFilePath = `/uploads/${filename}`;
+            const filename = `cv-${userId}-${Date.now()}-${cvFile.name.replace(/\s+/g, '-')}`;
+
+            await r2.send(new PutObjectCommand({
+                Bucket: R2_BUCKET_NAME,
+                Key: filename,
+                Body: buffer,
+                ContentType: cvFile.type,
+            }));
+
+            const isS3Endpoint = R2_PUBLIC_URL && R2_PUBLIC_URL.includes('r2.cloudflarestorage.com');
+
+            updates.cvFilePath = (R2_PUBLIC_URL && !isS3Endpoint)
+                ? `${R2_PUBLIC_URL}/${filename}`
+                : `/api/files/${filename}`;
         }
 
         if (certFile) {
             const buffer = Buffer.from(await certFile.arrayBuffer());
-            const filename = `cert-${userId}-${Date.now()}-${certFile.name}`;
-            await writeFile(path.join(uploadDir, filename), buffer);
-            updates.certificateFilePath = `/uploads/${filename}`;
-        }
+            const filename = `cert-${userId}-${Date.now()}-${certFile.name.replace(/\s+/g, '-')}`;
 
-        // If both files are present (or at least one if re-uploading), we might want to set status to pending?
-        // For now, just update paths.
+            await r2.send(new PutObjectCommand({
+                Bucket: R2_BUCKET_NAME,
+                Key: filename,
+                Body: buffer,
+                ContentType: certFile.type,
+            }));
+
+            const isS3Endpoint = R2_PUBLIC_URL && R2_PUBLIC_URL.includes('r2.cloudflarestorage.com');
+
+            updates.certificateFilePaths = [
+                (R2_PUBLIC_URL && !isS3Endpoint)
+                    ? `${R2_PUBLIC_URL}/${filename}`
+                    : `/api/files/${filename}`
+            ];
+        }
 
         await db
             .update(tutors)

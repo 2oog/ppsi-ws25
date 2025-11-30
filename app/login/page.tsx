@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import {
   Card,
   CardDescription,
@@ -51,8 +52,13 @@ export default function LoginPage() {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-3">
             <Button className="w-full">Sign in</Button>
+            <Link href="/register" className="w-full">
+              <Button variant="outline" className="w-full">
+                Register
+              </Button>
+            </Link>
           </CardFooter>
         </form>
       </Card>

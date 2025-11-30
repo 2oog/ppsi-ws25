@@ -21,7 +21,7 @@ interface Tutor {
     specialization: string | null;
     verificationStatus: string | null;
     cvFilePath: string | null;
-    certificateFilePath: string | null;
+    certificateFilePaths: string[] | null;
     createdAt: string;
 }
 
@@ -78,17 +78,22 @@ export function AdminVerificationTable({ tutors }: { tutors: Tutor[] }) {
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-col gap-1">
                                         {tutor.cvFilePath ? (
-                                            <Link href={tutor.cvFilePath} target="_blank" className="text-blue-600 hover:underline flex items-center">
+                                            <Link href={tutor.cvFilePath} target="_blank" className="text-blue-600 hover:underline flex items-center text-sm">
                                                 <FileText className="w-4 h-4 mr-1" /> CV
                                             </Link>
                                         ) : <span className="text-muted-foreground text-sm">No CV</span>}
-                                        {tutor.certificateFilePath ? (
-                                            <Link href={tutor.certificateFilePath} target="_blank" className="text-blue-600 hover:underline flex items-center">
-                                                <FileText className="w-4 h-4 mr-1" /> Cert
-                                            </Link>
-                                        ) : <span className="text-muted-foreground text-sm">No Cert</span>}
+
+                                        {tutor.certificateFilePaths && tutor.certificateFilePaths.length > 0 ? (
+                                            <div className="flex flex-wrap gap-2 mt-1">
+                                                {tutor.certificateFilePaths.map((path, idx) => (
+                                                    <Link key={idx} href={path} target="_blank" className="text-blue-600 hover:underline flex items-center text-sm">
+                                                        <FileText className="w-4 h-4 mr-1" /> Cert {idx + 1}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        ) : <span className="text-muted-foreground text-sm">No Certs</span>}
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-right space-x-2">

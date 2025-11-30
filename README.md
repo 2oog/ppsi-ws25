@@ -92,7 +92,7 @@ Admin:
 - [ ] **app/layout.tsx**: Update metadata with proper SEO tags (title, description, OG tags)
 - [ ] **Authentication Flows**:
   - [x] Email-based login flow (`/login`)
-  - [ ] Registration flow (`/login/register` or `/register`) - UI not yet created
+  - [x] Registration flow (`/login/register` or `/register`)
   - [ ] OAuth Google integration for login
   - [ ] OAuth Google integration for registration
 

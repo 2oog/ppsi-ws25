@@ -18,7 +18,7 @@ export async function GET(request: Request) {
                 specialization: tutors.specialization,
                 verificationStatus: tutors.verificationStatus,
                 cvFilePath: tutors.cvFilePath,
-                certificateFilePath: tutors.certificateFilePath,
+                certificateFilePaths: tutors.certificateFilePaths,
                 createdAt: tutors.createdAt
             })
             .from(tutors)

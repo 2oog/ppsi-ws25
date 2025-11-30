@@ -10,6 +10,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.940.0",
     "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-dropdown-menu": "^2.1.4",
     "@radix-ui/react-label": "^2.1.8",
@@ -28,7 +29,7 @@
     "drizzle-orm": "^0.31.4",
     "drizzle-zod": "^0.5.1",
     "lucide-react": "^0.400.0",
-    "next": "16.0.3",
+    "next": "16.0.5",
     "next-auth": "5.0.0-beta.25",
     "postcss": "^8.4.49",
     "postgres": "^3.4.7",
@@ -50,6 +51,8 @@
     "trailingComma": "none"
   },
   "devDependencies": {
+    "baseline-browser-mapping": "^2.8.32",
     "dotenv": "^17.2.3"
-  }
+  },
+  "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a"
 }
