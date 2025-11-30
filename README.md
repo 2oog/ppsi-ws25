@@ -93,8 +93,8 @@ Admin:
 - [ ] **Authentication Flows**:
   - [x] Email-based login flow (`/login`)
   - [x] Registration flow (`/login/register` or `/register`)
-  - [ ] OAuth Google integration for login
-  - [ ] OAuth Google integration for registration
+  - [?] OAuth Google integration for login
+  - [?] OAuth Google integration for registration
 
 ### Role-Specific Features
 
@@ -139,6 +139,7 @@ Admin:
 All core API endpoints are implemented (`/api/auth`, `/api/bookings`, `/api/reviews`, `/api/tutors`, `/api/notifications`, `/api/admin/tutors`).
 
 **Missing UI Components**:
+
 - Registration page
 - OAuth integration buttons
 - Notification bell/dropdown

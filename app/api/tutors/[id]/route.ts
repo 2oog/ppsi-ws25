@@ -63,3 +63,59 @@ export async function GET(
         );
     }
 }
+
+export async function PATCH(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    const { id } = await params;
+    const tutorId = parseInt(id);
+
+    if (isNaN(tutorId)) {
+        return NextResponse.json({ error: 'Invalid tutor ID' }, { status: 400 });
+    }
+
+    try {
+        const body = await request.json();
+        const { bio, specialization, experienceYears, hourlyRate } = body;
+
+        // Basic validation
+        if (hourlyRate && isNaN(parseFloat(hourlyRate))) {
+            return NextResponse.json(
+                { error: 'Invalid hourly rate' },
+                { status: 400 }
+            );
+        }
+
+        if (experienceYears && isNaN(parseInt(experienceYears))) {
+            return NextResponse.json(
+                { error: 'Invalid experience years' },
+                { status: 400 }
+            );
+        }
+
+        const updatedTutor = await db
+            .update(tutors)
+            .set({
+                bio,
+                specialization,
+                experienceYears: experienceYears ? parseInt(experienceYears) : undefined,
+                hourlyRate: hourlyRate ? parseFloat(hourlyRate).toFixed(2) : undefined,
+                updatedAt: new Date()
+            })
+            .where(eq(tutors.id, tutorId))
+            .returning();
+
+        if (updatedTutor.length === 0) {
+            return NextResponse.json({ error: 'Tutor not found' }, { status: 404 });
+        }
+
+        return NextResponse.json(updatedTutor[0]);
+    } catch (error) {
+        console.error('Error updating tutor profile:', error);
+        return NextResponse.json(
+            { error: 'Internal server error' },
+            { status: 500 }
+        );
+    }
+}
