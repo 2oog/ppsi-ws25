@@ -119,10 +119,10 @@ Admin:
 - [x] `/dashboard/tutor/profile` - Tutor profile page (page exists)
 - [x] `/dashboard/tutor/schedule` - Schedule management (page exists)
 - [x] Document upload for verification (API: `POST /api/tutors/documents`)
-- [ ] Booking acceptance/rejection flow UI (API exists: `PUT /api/bookings/[id]`)
-- [ ] Profile customization form (bio, specialization, experience, hourly rate)
+- [x] Booking acceptance/rejection flow UI (API exists: `PUT /api/bookings/[id]`)
+- [x] Profile customization form (bio, specialization, experience, hourly rate)
 - [ ] Verification status visibility and updates after admin approval
-- [ ] Availability calendar management UI
+- [?] Availability calendar management UI
 
 #### Admin Features
 
