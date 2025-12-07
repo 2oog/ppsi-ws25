@@ -1,4 +1,4 @@
-import { db, users, students, tutors } from '@/lib/db';
+import { db, users, students, tutors, notifications } from '@/lib/db';
 import { hash } from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
@@ -77,6 +77,23 @@ export async function POST(request: Request) {
                 cvFilePath,
                 certificateFilePaths
             });
+
+            // Notify all admins about the new tutor verification request
+            const admins = await db
+                .select()
+                .from(users)
+                .where(eq(users.role, 'admin'));
+
+            if (admins.length > 0) {
+                const notificationValues = admins.map(admin => ({
+                    userId: admin.id,
+                    type: 'tutor_verification',
+                    message: `New tutor verification request: ${fullname}`,
+                    isRead: false
+                }));
+
+                await db.insert(notifications).values(notificationValues);
+            }
         }
 
         return NextResponse.json(

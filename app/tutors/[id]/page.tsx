@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Star, Clock, BookOpen, Calendar } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { BookingModal } from '@/components/booking-modal';
+import { BackButton } from '@/components/back-button';
 
 async function getTutor(id: number) {
     const tutorData = await db
@@ -20,7 +21,8 @@ async function getTutor(id: number) {
             averageRating: tutors.averageRating,
             totalSessions: tutors.totalSessions,
             verificationStatus: tutors.verificationStatus,
-            jadwalKetersediaan: tutors.jadwalKetersediaan
+            jadwalKetersediaan: tutors.jadwalKetersediaan,
+            profilePicture: users.profilePicture
         })
         .from(tutors)
         .innerJoin(users, eq(tutors.userId, users.id))
@@ -60,12 +62,13 @@ export default async function TutorProfilePage(
 
     return (
         <div className="container mx-auto py-10 px-4 md:px-6">
+            <BackButton />
             <div className="grid gap-6 md:grid-cols-[300px_1fr]">
                 <div className="space-y-6">
                     <Card>
                         <CardContent className="pt-6 flex flex-col items-center text-center">
                             <Avatar className="w-32 h-32 mb-4">
-                                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${tutor.fullname}`} />
+                                <AvatarImage src={tutor.profilePicture || undefined} />
                                 <AvatarFallback>{tutor.fullname[0]}</AvatarFallback>
                             </Avatar>
                             <h1 className="text-2xl font-bold">{tutor.fullname}</h1>

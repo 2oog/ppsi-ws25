@@ -77,7 +77,7 @@ export async function PATCH(
 
     try {
         const body = await request.json();
-        const { bio, specialization, experienceYears, hourlyRate } = body;
+        const { bio, specialization, experienceYears, hourlyRate, jadwalKetersediaan } = body;
 
         // Basic validation
         if (hourlyRate && isNaN(parseFloat(hourlyRate))) {
@@ -101,6 +101,7 @@ export async function PATCH(
                 specialization,
                 experienceYears: experienceYears ? parseInt(experienceYears) : undefined,
                 hourlyRate: hourlyRate ? parseFloat(hourlyRate).toFixed(2) : undefined,
+                jadwalKetersediaan,
                 updatedAt: new Date()
             })
             .where(eq(tutors.id, tutorId))

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, CheckCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -55,6 +55,16 @@ export function NotificationBell() {
         }
     }
 
+    async function markAllAsRead() {
+        try {
+            await fetch('/api/notifications/read-all', { method: 'PUT' });
+            setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+            setUnreadCount(0);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -68,7 +78,21 @@ export function NotificationBell() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuLabel className="flex items-center justify-between">
+                    Notifications
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        title="Mark all as read"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            markAllAsRead();
+                        }}
+                    >
+                        <CheckCheck className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {notifications.length === 0 ? (
                     <div className="p-4 text-center text-sm text-muted-foreground">

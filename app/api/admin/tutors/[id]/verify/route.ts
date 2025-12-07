@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth';
-import { db, tutors } from '@/lib/db';
+import { db, tutors, notifications } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -29,6 +29,17 @@ export async function PUT(
             .set({ verificationStatus: status })
             .where(eq(tutors.id, tutorId))
             .returning();
+
+        if (updatedTutor) {
+            await db.insert(notifications).values({
+                userId: updatedTutor.userId,
+                type: 'verification_status',
+                message: status === 'approved'
+                    ? 'Your tutor account has been approved!'
+                    : 'Your tutor verification request has been rejected.',
+                isRead: false
+            });
+        }
 
         return NextResponse.json(updatedTutor);
     } catch (error) {

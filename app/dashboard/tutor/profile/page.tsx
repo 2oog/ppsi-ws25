@@ -1,14 +1,18 @@
 import { auth } from '@/lib/auth';
-import { db, tutors } from '@/lib/db';
-import { eq } from 'drizzle-orm';
+import { db, tutors, users } from '@/lib/db';
+import { eq, getTableColumns } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { VerificationForm } from '@/components/verification-form';
 import { ProfileForm } from '@/components/tutor/profile-form';
 
 async function getTutorProfile(userId: number) {
     const tutorRecord = await db
-        .select()
+        .select({
+            ...getTableColumns(tutors),
+            profilePicture: users.profilePicture
+        })
         .from(tutors)
+        .innerJoin(users, eq(tutors.userId, users.id))
         .where(eq(tutors.userId, userId))
         .limit(1);
     return tutorRecord[0];
@@ -44,11 +48,14 @@ export default async function TutorProfileDashboard() {
                 <div className="space-y-6">
                     <ProfileForm
                         tutorId={profile.id}
+                        userId={userId}
                         initialData={{
                             bio: profile.bio,
                             specialization: profile.specialization,
                             experienceYears: profile.experienceYears,
                             hourlyRate: profile.hourlyRate,
+                            profilePicture: profile.profilePicture,
+                            jadwalKetersediaan: profile.jadwalKetersediaan as any,
                         }}
                     />
                 </div>

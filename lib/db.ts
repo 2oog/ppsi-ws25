@@ -41,6 +41,7 @@ export const users = pgTable('users', {
   role: rolesEnum('role').notNull(),
   fullname: varchar('fullname', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 20 }),
+  profilePicture: varchar('profile_picture', { length: 500 }),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow()
 });

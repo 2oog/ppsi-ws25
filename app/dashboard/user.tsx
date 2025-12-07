@@ -35,7 +35,11 @@ export async function User() {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={user?.role === 'tutor' ? '/dashboard/tutor/profile' : user?.role === 'student' ? '/dashboard/student/profile' : '/dashboard/settings'}>
+            Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem>Support</DropdownMenuItem>
         <DropdownMenuSeparator />
         {user ? (

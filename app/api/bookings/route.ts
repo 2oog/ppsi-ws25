@@ -1,4 +1,4 @@
-import { db, bookings, tutors, students, users } from '@/lib/db';
+import { db, bookings, tutors, students, users, notifications } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { eq, and, desc } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
@@ -44,6 +44,30 @@ export async function POST(request: Request) {
                 status: 'pending'
             })
             .returning();
+
+        // Notify the tutor
+        const tutorRecord = await db
+            .select({ userId: tutors.userId })
+            .from(tutors)
+            .where(eq(tutors.id, tutorId))
+            .limit(1);
+
+        if (tutorRecord.length > 0) {
+            const studentUser = await db
+                .select({ fullname: users.fullname })
+                .from(users)
+                .where(eq(users.id, parseInt(session.user.id!)))
+                .limit(1);
+
+            const studentName = studentUser[0]?.fullname || 'A student';
+
+            await db.insert(notifications).values({
+                userId: tutorRecord[0].userId,
+                type: 'new_booking',
+                message: `New booking request: ${subject} from ${studentName}`,
+                isRead: false
+            });
+        }
 
         return NextResponse.json(newBooking, { status: 201 });
     } catch (error) {

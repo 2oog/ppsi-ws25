@@ -94,6 +94,9 @@ function DesktopNav({ role }: { role?: string }) {
             <NavItem href="/dashboard/student/bookings" label="My Bookings">
               <Calendar className="h-5 w-5" />
             </NavItem>
+            <NavItem href="/dashboard/student/profile" label="Profile">
+              <UserCheck className="h-5 w-5" />
+            </NavItem>
           </>
         )}
 
@@ -173,6 +176,10 @@ function MobileNav({ role }: { role?: string }) {
               <Link href="/dashboard/student/bookings" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
                 <Calendar className="h-5 w-5" />
                 My Bookings
+              </Link>
+              <Link href="/dashboard/student/profile" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                <UserCheck className="h-5 w-5" />
+                Profile
               </Link>
             </>
           )}
