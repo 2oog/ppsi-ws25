@@ -104,6 +104,23 @@ pnpm dev --turbopack
 
 You should now be able to access the application at <http://localhost:3000>.
 
+## Testing accounts
+
+Student:
+
+- Email: <student@example.com>
+- Password: f8ZdYc6fsNPYOBnS
+
+Tutor:
+
+- Email: <tutor@example.com>
+- Password: f8ZdYc6fsNPYOBnS
+
+Admin:
+
+- Email: <admin@example.com>
+- Password: f8ZdYc6fsNPYOBnS
+
 ## Features status
 
 ### Site-wide Features

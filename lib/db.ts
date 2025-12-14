@@ -17,7 +17,7 @@ import {
 import { relations } from 'drizzle-orm';
 
 const client = postgres(process.env.POSTGRES_URL!);
-export const db = drizzle(client);
+// db initialization moved to end of file to include schema
 
 // Enums
 export const rolesEnum = pgEnum('roles', ['admin', 'tutor', 'student']);
@@ -43,7 +43,8 @@ export const users = pgTable('users', {
   phone: varchar('phone', { length: 20 }),
   profilePicture: varchar('profile_picture', { length: 500 }),
   createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow()
+  updatedAt: timestamp('updated_at').defaultNow(),
+  banned: boolean('banned').default(false)
 });
 
 export const tutors = pgTable(
@@ -156,8 +157,28 @@ export const notifications = pgTable(
   })
 );
 
+export const reports = pgTable(
+  'reports',
+  {
+    id: serial('id').primaryKey(),
+    reporterId: integer('reporter_id')
+      .notNull()
+      .references(() => users.id),
+    reportedId: integer('reported_id')
+      .notNull()
+      .references(() => users.id),
+    reason: text('reason'),
+    status: varchar('status', { length: 50 }).default('pending'),
+    createdAt: timestamp('created_at').defaultNow()
+  },
+  (table) => ({
+    idxReporter: index('idx_reporter').on(table.reporterId),
+    idxReported: index('idx_reported').on(table.reportedId)
+  })
+);
+
 // Relations
-export const usersRelations = relations(users, ({ one }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   tutorProfile: one(tutors, {
     fields: [users.id],
     references: [tutors.userId]
@@ -165,7 +186,9 @@ export const usersRelations = relations(users, ({ one }) => ({
   studentProfile: one(students, {
     fields: [users.id],
     references: [students.userId]
-  })
+  }),
+  reportsMade: many(reports, { relationName: 'reporter' }),
+  reportsReceived: many(reports, { relationName: 'reported' })
 }));
 
 export const tutorsRelations = relations(tutors, ({ one, many }) => ({
@@ -215,3 +238,37 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
     references: [tutors.id]
   })
 }));
+
+export const reportsRelations = relations(reports, ({ one }) => ({
+  reporter: one(users, {
+    fields: [reports.reporterId],
+    references: [users.id],
+    relationName: 'reporter'
+  }),
+  reported: one(users, {
+    fields: [reports.reportedId],
+    references: [users.id],
+    relationName: 'reported'
+  })
+}));
+
+export const db = drizzle(client, {
+  schema: {
+    users,
+    tutors,
+    students,
+    bookings,
+    reviews,
+    notifications,
+    reports,
+    usersRelations,
+    tutorsRelations,
+    studentsRelations,
+    bookingsRelations,
+    reviewsRelations,
+    reportsRelations,
+    rolesEnum,
+    verificationStatusEnum,
+    bookingStatusEnum
+  }
+});
