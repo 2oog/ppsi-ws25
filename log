@@ -1,0 +1,224 @@
+[33mcommit e474277307ce7f995246446d1ffdcf20f307b7b5[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Mon Dec 15 01:43:40 2025 +0700
+
+    update all packages
+
+163	0	assignment/W12 Contoh LAPORAN PENGUKURAN KONSTRUKSI SOFTWARE.md
+15	14	package.json
+601	1038	pnpm-lock.yaml
+7	0	sonar-project.properties
+
+[33mcommit ae5185a96a234f8934dff36b1abe8f2e5298bfa2[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Sun Dec 14 22:38:48 2025 +0700
+
+    should be done :3
+
+17	0	README.md
+22	0	app/actions/user.ts
+300	0	app/dashboard/admin/users/page.tsx
+670	0	assignment/W11 Pertemuan 8-10.md
+75	0	components/admin/user-actions.tsx
+23	0	drizzle/0003_overjoyed_warbird.sql
+1	0	drizzle/0004_purple_network.sql
+821	0	drizzle/meta/0003_snapshot.json
+828	0	drizzle/meta/0004_snapshot.json
+14	0	drizzle/meta/_journal.json
+61	4	lib/db.ts
+
+[33mcommit 64f484660e28a5d2707ade00a01c5faba389d2b6[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Sun Dec 7 21:02:47 2025 +0700
+
+    update readme
+
+88	81	README.md
+
+[33mcommit 9228e31a2d37729066ae1611c1fb80bca7b9e634[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Sun Dec 7 20:15:38 2025 +0700
+
+    dashboard & notifs all roles
+
+12	1	app/api/admin/tutors/[id]/verify/route.ts
+18	1	app/api/auth/register/route.ts
+25	1	app/api/bookings/route.ts
+25	0	app/api/notifications/read-all/route.ts
+42	0	app/api/students/[id]/route.ts
+2	1	app/api/tutors/[id]/route.ts
+45	0	app/api/users/[id]/profile-picture/route.ts
+131	3	app/dashboard/admin/page.tsx
+7	0	app/dashboard/layout.tsx
+2	2	app/dashboard/search.tsx
+94	4	app/dashboard/student/page.tsx
+59	0	app/dashboard/student/profile/page.tsx
+244	13	app/dashboard/tutor/page.tsx
+10	3	app/dashboard/tutor/profile/page.tsx
+5	1	app/dashboard/user.tsx
+5	2	app/tutors/[id]/page.tsx
+65	0	assignment/W9 Contoh Laporan_Software_Construction_Testing_Sistem_Informasi_Rumah_Sakit.md
+114	0	assignment/W9 Contoh Software_Construction_Design_Hospital_Registration_System.md
+272	0	assignment/W9 TutorGo Laporan Software Construction Testing System copy.md
+1199	0	assignment/W9 TutorGo Software Construction Design Document.md
+15	0	components/back-button.tsx
+26	2	components/notification-bell.tsx
+215	0	components/student/profile-form.tsx
+251	72	components/tutor/profile-form.tsx
+69	27	components/ui/avatar.tsx
+1	0	drizzle/0002_sudden_ikaris.sql
+715	0	drizzle/meta/0002_snapshot.json
+7	0	drizzle/meta/_journal.json
+1	0	lib/db.ts
+23	0	mini-todo.md
+1	1	package.json
+47	47	pnpm-lock.yaml
+
+[33mcommit 7468725116d69632ad5113049a02f3aa07e3541b[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Mon Dec 1 13:44:00 2025 +0700
+
+    update readme
+
+3	3	README.md
+
+[33mcommit b4a1922a92d56063d5204f954344b28403b0ca5c[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Mon Dec 1 04:35:38 2025 +0700
+
+    added role:tutor /dashboard/tutor/profile
+
+3	2	README.md
+56	0	app/api/tutors/[id]/route.ts
+25	30	app/dashboard/tutor/profile/page.tsx
+6	1	app/layout.tsx
+161	0	components/tutor/profile-form.tsx
+129	0	components/ui/toast.tsx
+35	0	components/ui/toaster.tsx
+195	0	hooks/use-toast.ts
+2	1	lib/auth.ts
+2	1	package.json
+339	47	pnpm-lock.yaml
+4	21	tsconfig.json
+
+[33mcommit 3c204f6495f8c0cd6074aecaa8dfbe89c23c9e4c[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Sun Nov 30 13:43:01 2025 +0700
+
+    r2/s3 bucket support
+
+4	1	.gitignore
+1	1	README.md
+1	1	app/api/admin/tutors/route.ts
+17	5	app/api/auth/register/route.ts
+46	0	app/api/files/[key]/route.ts
+32	14	app/api/tutors/documents/route.ts
+47	0	app/api/upload/route.ts
+1	1	app/dashboard/admin/verification/page.tsx
+7	1	app/login/page.tsx
+1	1	app/page.tsx
+311	0	app/register/form/page.tsx
+80	0	app/register/page.tsx
+13	8	components/admin-verification-table.tsx
+59	0	components/ui/alert.tsx
+2	0	drizzle/0001_foamy_sunset_bain.sql
+709	0	drizzle/meta/0001_snapshot.json
+7	0	drizzle/meta/_journal.json
+1	1	lib/db.ts
+17	0	lib/r2.ts
+6	3	package.json
+1269	47	pnpm-lock.yaml
+
+[33mcommit d0ba7e287e5796d0e18301de1f931bdc91089ec6[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Mon Nov 24 03:13:56 2025 +0700
+
+    todos
+
+72	8	README.md
+2	2	app/layout.tsx
+
+[33mcommit 46e7d91849eaf9eabf6e789f048f5fb43259561d[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Mon Nov 24 01:36:59 2025 +0700
+
+    fix: remove product template code
+
+1	7	app/dashboard/actions.ts
+
+[33mcommit 70fc5927cf34b46782b6e05c4c14a74ba7b45221[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Mon Nov 24 01:31:50 2025 +0700
+
+    core init
+
+34	0	.agent/workflows/database-migrations.md
+35	16	README.md
+0	19	app/(dashboard)/customers/page.tsx
+0	46	app/(dashboard)/error.tsx
+0	55	app/(dashboard)/page.tsx
+0	60	app/(dashboard)/product.tsx
+0	113	app/(dashboard)/products-table.tsx
+41	0	app/api/admin/tutors/[id]/verify/route.ts
+33	0	app/api/admin/tutors/route.ts
+1	0	app/api/auth/[...nextauth]/route.ts
+92	0	app/api/auth/register/route.ts
+120	0	app/api/bookings/[id]/route.ts
+127	0	app/api/bookings/route.ts
+42	0	app/api/notifications/[id]/read/route.ts
+27	0	app/api/notifications/route.ts
+70	0	app/api/reviews/route.ts
+0	112	app/api/seed/route.ts
+65	0	app/api/tutors/[id]/route.ts
+66	0	app/api/tutors/documents/route.ts
+72	0	app/api/tutors/route.ts
+0	0	app/{(dashboard) => dashboard}/actions.ts
+34	0	app/dashboard/admin/page.tsx
+43	0	app/dashboard/admin/verification/page.tsx
+27	0	app/dashboard/error.tsx
+95	64	app/{(dashboard) => dashboard}/layout.tsx
+0	0	app/{(dashboard) => dashboard}/nav-item.tsx
+26	0	app/dashboard/page.tsx
+0	0	app/{(dashboard) => dashboard}/providers.tsx
+0	0	app/{(dashboard) => dashboard}/search.tsx
+57	0	app/dashboard/student/bookings/page.tsx
+43	0	app/dashboard/student/page.tsx
+73	0	app/dashboard/student/search/page.tsx
+52	0	app/dashboard/tutor/page.tsx
+67	0	app/dashboard/tutor/profile/page.tsx
+54	0	app/dashboard/tutor/schedule/page.tsx
+0	0	app/{(dashboard) => dashboard}/user.tsx
+43	19	app/login/page.tsx
+80	0	app/page.tsx
+161	0	app/tutors/[id]/page.tsx
+118	0	components/admin-verification-table.tsx
+98	0	components/booking-list.tsx
+99	0	components/booking-modal.tsx
+96	0	components/notification-bell.tsx
+109	0	components/review-modal.tsx
+51	0	components/tutor-card.tsx
+37	0	components/tutor-search.tsx
+46	0	components/ui/avatar.tsx
+122	0	components/ui/dialog.tsx
+26	0	components/ui/label.tsx
+24	0	components/ui/textarea.tsx
+71	0	components/verification-form.tsx
+13	0	drizzle.config.ts
+148	0	drizzle/0000_solid_betty_ross.sql
+709	0	drizzle/meta/0000_snapshot.json
+13	0	drizzle/meta/_journal.json
+69	2	lib/auth.ts
+197	53	lib/db.ts
+13	5	package.json
+357	236	pnpm-lock.yaml
+22	0	test-db.ts
+24	8	tsconfig.json
+14	0	types/next-auth.d.ts
+
+[33mcommit d32ab80e61cd1129d8650c9198b89068d5e5f35b[m
+Author: [1;31m2oog[m <z00gs@outlook.com>
+Date:   Mon Nov 24 01:31:02 2025 +0700
+
+    UPDATED GIT IGNORE HOLY COW THANK GOD
+
+5	1	.gitignore

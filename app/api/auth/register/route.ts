@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-const registerSchema = z.object({
+export const registerSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
     fullname: z.string().min(2),
@@ -15,7 +15,7 @@ const registerSchema = z.object({
     certificateFilePaths: z.array(z.string()).optional()
 });
 
-function formatPhoneNumber(phone: string): string {
+export function formatPhoneNumber(phone: string): string {
     // Remove any whitespace
     let formatted = phone.trim();
 
