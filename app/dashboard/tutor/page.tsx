@@ -5,6 +5,7 @@ import { db, tutors, bookings, students, users } from '@/lib/db';
 import { eq, and, gt, desc, count, asc } from 'drizzle-orm';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { DashboardBookingActions } from '@/components/dashboard-booking-actions';
 
 export default async function TutorDashboard() {
     const session = await auth();
@@ -225,10 +226,7 @@ export default async function TutorDashboard() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex gap-2 mt-2">
-                                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700">Accept</Button>
-                                            <Button size="sm" variant="outline" className="w-full text-red-600 hover:bg-red-50 border-red-200">Reject</Button>
-                                        </div>
+                                        <DashboardBookingActions bookingId={booking.id} />
                                     </li>
                                 ))}
                             </ul>

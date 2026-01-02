@@ -26,23 +26,27 @@ export function NotificationBell() {
     const [unreadCount, setUnreadCount] = useState(0);
     const router = useRouter();
 
-    async function fetchNotifications() {
-        try {
-            const res = await fetch('/api/notifications');
-            if (res.ok) {
-                const data = await res.json();
-                setNotifications(data);
-                setUnreadCount(data.filter((n: Notification) => !n.isRead).length);
-            }
-        } catch (error) {
-            console.error('Failed to fetch notifications', error);
-        }
-    }
+
+
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        fetchNotifications();
-        const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
-        return () => clearInterval(interval);
+        setIsMounted(true);
+        const eventSource = new EventSource('/api/notifications/stream');
+
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                setNotifications(data);
+                setUnreadCount(data.filter((n: Notification) => !n.isRead).length);
+            } catch (error) {
+                console.error('Error parsing SSE data:', error);
+            }
+        };
+
+        return () => {
+            eventSource.close();
+        };
     }, []);
 
     async function markAsRead(id: number) {
@@ -63,6 +67,14 @@ export function NotificationBell() {
         } catch (error) {
             console.error(error);
         }
+    }
+
+    if (!isMounted) {
+        return (
+            <Button variant="ghost" size="icon" className="relative">
+                <Bell className="h-5 w-5" />
+            </Button>
+        );
     }
 
     return (

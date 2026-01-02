@@ -4,12 +4,19 @@ import { Suspense } from 'react';
 
 async function getTutors(subject?: string) {
     const { db, tutors, users } = await import('@/lib/db');
-    const { eq, and, like } = await import('drizzle-orm');
+    const { eq, and, ilike, or } = await import('drizzle-orm');
 
     const conditions = [eq(tutors.verificationStatus, 'approved')];
 
     if (subject) {
-        conditions.push(like(tutors.specialization, `%${subject}%`));
+        const searchCondition = or(
+            ilike(tutors.specialization, `%${subject}%`),
+            ilike(tutors.bio, `%${subject}%`),
+            ilike(users.fullname, `%${subject}%`)
+        );
+        if (searchCondition) {
+            conditions.push(searchCondition);
+        }
     }
 
     const results = await db
