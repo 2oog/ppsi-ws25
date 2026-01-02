@@ -2,6 +2,20 @@ import { NextResponse } from 'next/server';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { r2, R2_BUCKET_NAME, R2_PUBLIC_URL } from '@/lib/r2';
 
+/**
+ * Generic file upload endpoint.
+ *
+ * @remarks
+ * Uploads one or more files to the configured storage (R2).
+ * Returns the public URLs and/or API proxy paths for the uploaded files.
+ *
+ * @param request - The incoming HTTP request containing FormData.
+ * @param request.body - FormData with 'files' field.
+ *
+ * @returns A JSON response containing an array of uploaded file paths.
+ * @throws 400 - No files uploaded.
+ * @throws 500 - Internal server error.
+ */
 export async function POST(request: Request) {
     try {
         const formData = await request.formData();

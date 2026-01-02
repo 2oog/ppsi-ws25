@@ -8,6 +8,25 @@ const updateBookingSchema = z.object({
     status: z.enum(['confirmed', 'cancelled', 'completed'])
 });
 
+/**
+ * Updates the status of an existing booking.
+ *
+ * @remarks
+ * This endpoint allows tutors and students to update the status of a booking.
+ * - Tutors can confirm, cancel, or complete bookings.
+ * - Students can only cancel bookings.
+ * Notifications are sent to the counterparty upon status update.
+ *
+ * @param request - The incoming HTTP request containing the new status.
+ * @param params - The route parameters containing the booking ID.
+ * @param params.id - The unique identifier of the booking.
+ *
+ * @returns A JSON response containing the updated booking record.
+ * @throws 401 - Unauthorized if the user is not logged in.
+ * @throws 403 - Forbidden if the user is not authorized to update this booking.
+ * @throws 404 - Not Found if the booking does not exist.
+ * @throws 500 - Internal server error.
+ */
 export async function PUT(
     request: Request,
     { params }: { params: Promise<{ id: string }> }

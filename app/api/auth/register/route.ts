@@ -32,6 +32,21 @@ export function formatPhoneNumber(phone: string): string {
     return formatted;
 }
 
+/**
+ * Registers a new user in the system.
+ *
+ * @remarks
+ * This endpoint handles user registration for students, tutors, and admins.
+ * It performs email validation, phone number formatting, and role-specific setup.
+ * For tutors, it triggers a verification request notification to admins.
+ *
+ * @param request - The incoming HTTP request containing registration data.
+ * @param request.body - The JSON payload matching `registerSchema`.
+ *
+ * @returns A JSON response indicating success or failure.
+ * @throws 400 - Bad Request if input validation fails or user already exists.
+ * @throws 500 - Internal server error.
+ */
 export async function POST(request: Request) {
     try {
         const body = await request.json();

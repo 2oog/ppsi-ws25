@@ -2,6 +2,22 @@ import { db, tutors, users, reviews, students } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
+/**
+ * Retrieves detailed information about a specific tutor.
+ *
+ * @remarks
+ * Fetches tutor profile, user details, and reviews.
+ * This endpoint is public (or at least accessible to authenticated users).
+ *
+ * @param request - The incoming HTTP request.
+ * @param params - The route parameters.
+ * @param params.id - The unique identifier of the tutor.
+ *
+ * @returns A JSON response with tutor details and reviews.
+ * @throws 400 - Invalid tutor ID.
+ * @throws 404 - Tutor not found.
+ * @throws 500 - Internal server error.
+ */
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -64,6 +80,22 @@ export async function GET(
     }
 }
 
+/**
+ * Updates a tutor's profile information.
+ *
+ * @remarks
+ * Allows updating bio, specialization, experience years, hourly rate, and schedule.
+ * Performs validation on numeric fields.
+ *
+ * @param request - The incoming HTTP request.
+ * @param params - The route parameters.
+ * @param params.id - The unique identifier of the tutor.
+ *
+ * @returns A JSON response with the updated tutor profile.
+ * @throws 400 - Invalid input (e.g. invalid hourly rate).
+ * @throws 404 - Tutor not found.
+ * @throws 500 - Internal server error.
+ */
 export async function PATCH(
     request: Request,
     { params }: { params: Promise<{ id: string }> }

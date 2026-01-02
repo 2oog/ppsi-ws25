@@ -2,6 +2,21 @@ import { db, users } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
+/**
+ * Updates a user's profile picture.
+ *
+ * @remarks
+ * Updates the 'profilePicture' URL field in the user record.
+ *
+ * @param request - The incoming HTTP request.
+ * @param params - The route parameters.
+ * @param params.id - The unique identifier of the user.
+ *
+ * @returns A JSON response with the updated user record.
+ * @throws 400 - Invalid user ID or missing profile picture URL.
+ * @throws 404 - User not found.
+ * @throws 500 - Internal server error.
+ */
 export async function PATCH(
     request: Request,
     { params }: { params: Promise<{ id: string }> }

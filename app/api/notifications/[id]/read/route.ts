@@ -3,6 +3,22 @@ import { db, notifications } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
+/**
+ * Marks a specific notification as read.
+ *
+ * @remarks
+ * Updates the 'isRead' status of a notification to true.
+ * Requires the user to be the owner of the notification.
+ *
+ * @param request - The incoming HTTP request.
+ * @param params - The route parameters containing the notification ID.
+ * @param params.id - The unique identifier of the notification.
+ *
+ * @returns A JSON response with the updated notification.
+ * @throws 401 - Unauthorized.
+ * @throws 404 - Notification not found or not owned by the user.
+ * @throws 500 - Internal server error.
+ */
 export async function PUT(
     request: Request,
     { params }: { params: Promise<{ id: string }> }

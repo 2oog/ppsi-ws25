@@ -1,0 +1,129 @@
+Project TutorGo {
+  database_type: 'PostgreSQL'
+  Note: 'TutorGo Database Schema'
+}
+
+Enum roles {
+  admin
+  tutor
+  student
+}
+
+Enum verification_statuses {
+  pending
+  approved
+  rejected
+}
+
+Enum booking_statuses {
+  pending
+  confirmed
+  completed
+  cancelled
+}
+
+Table users {
+  id serial [pk, increment]
+  email varchar(255) [not null, unique]
+  password_hash varchar(255) [not null]
+  role roles [not null]
+  fullname varchar(255) [not null]
+  phone varchar(20)
+  profile_picture varchar(500)
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  banned boolean [default: false]
+}
+
+Table tutors {
+  id serial [pk, increment]
+  user_id integer [not null, unique, ref: - users.id]
+  bio text
+  specialization varchar(255)
+  experience_years integer
+  verification_status verification_statuses [default: 'pending']
+  cv_file_path varchar(500)
+  certificate_file_paths json
+  hourly_rate decimal(10,2)
+  average_rating decimal(3,2) [default: 0.00]
+  total_sessions integer [default: 0]
+  jadwal_ketersediaan json
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+
+  indexes {
+    specialization
+    verification_status
+  }
+}
+
+Table students {
+  id serial [pk, increment]
+  user_id integer [not null, unique, ref: - users.id]
+  education_level varchar(100)
+  interests text
+  created_at timestamp [default: `now()`]
+}
+
+Table bookings {
+  id serial [pk, increment]
+  student_id integer [not null, ref: > students.id]
+  tutor_id integer [not null, ref: > tutors.id]
+  subject varchar(255) [not null]
+  session_date timestamp [not null]
+  duration_minutes integer [default: 60]
+  status booking_statuses [default: 'pending']
+  notes text
+  version integer [default: 0]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+
+  indexes {
+    student_id
+    tutor_id
+    session_date
+    status
+  }
+}
+
+Table reviews {
+  id serial [pk, increment]
+  booking_id integer [not null, unique, ref: - bookings.id]
+  student_id integer [not null, ref: > students.id]
+  tutor_id integer [not null, ref: > tutors.id]
+  rating integer
+  comment text
+  created_at timestamp [default: `now()`]
+
+  indexes {
+    tutor_id
+  }
+}
+
+Table notifications {
+  id serial [pk, increment]
+  user_id integer [not null, ref: > users.id]
+  type varchar(50)
+  message text
+  is_read boolean [default: false]
+  created_at timestamp [default: `now()`]
+
+  indexes {
+    user_id
+    type
+  }
+}
+
+Table reports {
+  id serial [pk, increment]
+  reporter_id integer [not null, ref: > users.id]
+  reported_id integer [not null, ref: > users.id]
+  reason text
+  status varchar(50) [default: 'pending']
+  created_at timestamp [default: `now()`]
+
+  indexes {
+    reporter_id
+    reported_id
+  }
+}

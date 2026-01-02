@@ -2,6 +2,21 @@ import { db, tutors, users } from '@/lib/db';
 import { eq, and, like, gte } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
+/**
+ * Searches and retrieves a list of approved tutors.
+ *
+ * @remarks
+ * Supports filtering by subject/specialization and minimum rating.
+ * Only returns tutors with 'approved' verification status.
+ *
+ * @param request - The incoming HTTP request with query parameters.
+ * @param request.query.subject - Filter by subject/specialization.
+ * @param request.query.specialization - (Alias for subject).
+ * @param request.query.minRating - Filter by minimum average rating.
+ *
+ * @returns A JSON response containing an array of tutors.
+ * @throws 500 - Internal server error.
+ */
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const subject = searchParams.get('subject');

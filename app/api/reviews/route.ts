@@ -10,6 +10,22 @@ const createReviewSchema = z.object({
     comment: z.string().min(1)
 });
 
+/**
+ * Creates a new review for a completed booking.
+ *
+ * @remarks
+ * Allows students to rate and comment on a tutor after a completed session.
+ * Automatically recalculates and updates the tutor's average rating.
+ *
+ * @param request - The incoming HTTP request.
+ * @param request.body - JSON payload with bookingId, rating (1-5), and comment.
+ *
+ * @returns A JSON response with the created review.
+ * @throws 401 - Unauthorized or not a student.
+ * @throws 404 - Booking not found.
+ * @throws 400 - Invalid input or session not completed.
+ * @throws 500 - Internal server error.
+ */
 export async function POST(request: Request) {
     const session = await auth();
     if (!session?.user || session.user.role !== 'student') {

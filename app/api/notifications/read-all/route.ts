@@ -3,6 +3,19 @@ import { db, notifications } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
+/**
+ * Marks all notifications for the current user as read.
+ *
+ * @remarks
+ * This endpoint allows users to clear their unread notification count
+ * by setting 'isRead' to true for all their notifications.
+ *
+ * @param request - The incoming HTTP request.
+ *
+ * @returns A JSON response indicating success.
+ * @throws 401 - Unauthorized.
+ * @throws 500 - Internal server error.
+ */
 export async function PUT(request: Request) {
     const session = await auth();
     if (!session?.user?.id) {

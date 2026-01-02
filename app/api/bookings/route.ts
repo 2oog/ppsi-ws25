@@ -12,6 +12,22 @@ const createBookingSchema = z.object({
     notes: z.string().optional()
 });
 
+/**
+ * Creates a new booking request.
+ *
+ * @remarks
+ * Allows a student to book a session with a tutor.
+ * Automatically notifies the tutor of the new booking request.
+ *
+ * @param request - The incoming HTTP request containing booking details.
+ * @param request.body - JSON payload with tutorId, subject, sessionDate, durationMinutes, notes.
+ *
+ * @returns A JSON response with the created booking.
+ * @throws 401 - Unauthorized if not a student.
+ * @throws 404 - Student profile not found.
+ * @throws 400 - Invalid input.
+ * @throws 500 - Internal server error.
+ */
 export async function POST(request: Request) {
     const session = await auth();
     if (!session?.user || session.user.role !== 'student') {
@@ -79,6 +95,20 @@ export async function POST(request: Request) {
     }
 }
 
+/**
+ * Retrieves a list of bookings for the authenticated user.
+ *
+ * @remarks
+ * Returns bookings relevant to the user's role (student or tutor).
+ * Data includes details about the counterparty (tutor name for students, student name for tutors).
+ *
+ * @param request - The incoming HTTP request.
+ *
+ * @returns A JSON response containing an array of bookings.
+ * @throws 401 - Unauthorized.
+ * @throws 403 - Invalid role.
+ * @throws 500 - Internal server error.
+ */
 export async function GET(request: Request) {
     const session = await auth();
     if (!session?.user) {

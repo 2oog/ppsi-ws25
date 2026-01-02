@@ -8,6 +8,22 @@ const verifySchema = z.object({
     status: z.enum(['approved', 'rejected', 'pending'])
 });
 
+/**
+ * Updates the verification status of a tutor.
+ *
+ * @remarks
+ * This endpoint allows an admin to approve or reject a tutor's verification request.
+ * Upon status change, a notification is sent to the tutor.
+ *
+ * @param request - The incoming HTTP request containing the status update.
+ * @param params - The route parameters containing the tutor's ID.
+ * @param params.id - The ID of the tutor to verify.
+ *
+ * @returns A JSON response containing the updated tutor record.
+ * @throws 401 - Unauthorized if the user is not an admin.
+ * @throws 400 - Invalid input if the status is not 'approved', 'rejected', or 'pending'.
+ * @throws 500 - Internal server error.
+ */
 export async function PUT(
     request: Request,
     { params }: { params: Promise<{ id: string }> }

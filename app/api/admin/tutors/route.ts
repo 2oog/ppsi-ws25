@@ -3,6 +3,20 @@ import { db, tutors, users } from '@/lib/db';
 import { eq, desc } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
+/**
+ * Retrieves a list of all tutors with their user details.
+ *
+ * @remarks
+ * This endpoint is restricted to administrators. It fetches all tutors,
+ * including their verification status and detailed user information,
+ * ordered by creation date descending.
+ *
+ * @param request - The incoming HTTP request.
+ *
+ * @returns A JSON response containing an array of tutor objects.
+ * @throws 401 - Unauthorized if the user is not an admin.
+ * @throws 500 - Internal server error.
+ */
 export async function GET(request: Request) {
     const session = await auth();
     if (!session?.user || session.user.role !== 'admin') {
